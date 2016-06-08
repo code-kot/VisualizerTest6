@@ -17,12 +17,10 @@ type
     FSourceBitmap: TBimapData;
     FFrameBitmap: TFrameData;
     FFrameBitmapLock: TCriticalSection;
-    FQueueTimerHandle: THandle;
     FFrameStartPosition: Double;
     FFrameStartPositionInt: Integer;
     FPaintBox: TDirectPaintBox;
 
-    procedure StopQueueTimer;
     procedure ShiftFrame(Delta: Integer);
     function GetFrame: TFrameData;
   protected
@@ -45,13 +43,6 @@ const
   COLUMNS_PER_MS = 1/COLUMN_TIME; // new columns per 1 ms
 //  FRAME_STEP = 4;
   FRAME_STEP = FRAME_TIME / COLUMN_TIME; // new columns per frame time
-
-procedure QueueTimerCallBack(Context: TEvent; Success: Boolean); stdcall;
-begin
-//  OutputDebugString(PChar('QueueTimerCallBack Tick'));
-  if Assigned(Context) then
-   Context.SetEvent;
-end;
 
 { TDataGeneratorThread }
 
@@ -95,21 +86,10 @@ end;
 
 destructor TDataGeneratorThread.Destroy;
 begin
-  StopQueueTimer;
-
   FreeAndNil(FTerminatedEvent);
   FreeAndNil(FFrameBitmapLock);
 
   inherited Destroy;
-end;
-
-procedure TDataGeneratorThread.StopQueueTimer;
-begin
-  if FQueueTimerHandle <> 0 then
-  begin
-    DeleteTimerQueueTimer(0, FQueueTimerHandle, 0);
-    FQueueTimerHandle := 0;
-  end;
 end;
 
 procedure TDataGeneratorThread.Execute;

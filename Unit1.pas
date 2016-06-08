@@ -19,7 +19,6 @@ type
     { Private declarations }
     FPaintBox: TDirectPaintBox;
     FDataGeneratorThread: TDataGeneratorThread;
-    FFrameBitmap: TBitmap;
 
     procedure FreeDataGeneratorThread;
     procedure CreatePaintBox;
@@ -43,9 +42,6 @@ begin
   inherited CreateWnd;
 
   CreatePaintBox;
-
-  FFrameBitmap := TBitmap.Create;
-  FFrameBitmap.PixelFormat := pf32bit;
 end;
 
 procedure TForm1.CreatePaintBox;
@@ -58,7 +54,6 @@ end;
 procedure TForm1.FormDestroy(Sender: TObject);
 begin
   FreeDataGeneratorThread;
-  FFrameBitmap.Free;
 end;
 
 procedure TForm1.FormKeyDown(Sender: TObject; var Key: Word;
